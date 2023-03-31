@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "915730762377",
+    "project_id": "students-f2e0f",
+    "storage_bucket": "students-f2e0f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:915730762377:android:269bcb97165d1fb3875458",
+        "android_client_info": {
+          "package_name": "com.example.firestonearrayjava"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "915730762377-dqvfme1vud8gg0137kpp4jv7d95ft2k8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzy7Mt1iNiRrsd5sAkkEWTdh29NbJ6Akc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "915730762377-dqvfme1vud8gg0137kpp4jv7d95ft2k8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
