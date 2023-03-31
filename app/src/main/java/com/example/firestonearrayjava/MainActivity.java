@@ -1,6 +1,7 @@
 package com.example.firestonearrayjava;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,12 +9,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements StudentsAdapter.ItemEvent {
-    final String TAG = "MainActivity";
+    final String TAG = MainActivity.class.getSimpleName();
     final String COLLECTION_NAME = "grade";
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     RecyclerView rvStudents;
@@ -47,10 +49,35 @@ public class MainActivity extends AppCompatActivity implements StudentsAdapter.I
         adapter = new StudentsAdapter(this);
         rvStudents.setAdapter(adapter);
 
-        readData();
+        addSnapshotListener();
     }
 
-    void readData() {
+    void addSnapshotListener() {
+        CollectionReference cr = db.collection(COLLECTION_NAME);
+        cr.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(error != null) {
+                    Log.w(TAG, "Error Snapshot event: " + error); //실패
+                }
+                List<DocumentSnapshot> docSnaps = value.getDocuments();
+                showData(docSnaps);
+            }
+        });
+    }
+
+    void showData(List<DocumentSnapshot> snaps) {
+        ArrayList<Student> students = new ArrayList();
+        for (DocumentSnapshot snap : snaps) {
+            Student student = new Gson().fromJson(snap.getData().toString(), Student.class);
+            student.id = snap.getId();
+            students.add(student);
+            Log.d(TAG, snap.getId() + " => " + snap.getData());
+        }
+        updateRecyclerView(students);
+    }
+
+    /*void readData() {
         selIndex = -1;
         db.collection(COLLECTION_NAME)
                 .get()
@@ -71,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements StudentsAdapter.I
                         }
                     }
                 });
-    }
+    }*/
 
     void updateRecyclerView(List<Student> students) {
         adapter.setStudents(students);
@@ -163,16 +190,14 @@ public class MainActivity extends AppCompatActivity implements StudentsAdapter.I
     OnSuccessListener firestoreSuccessListener =  new OnSuccessListener<Void>() {
         @Override
         public void onSuccess(Void unused) {
-            Log.d(TAG,"FireStore input success");   //성공
-            readData();
+            Log.d(TAG,"FireStore input success");
         }
     };
 
     OnFailureListener firestoreFailureListener = new OnFailureListener() {
         @Override
         public void onFailure(@NonNull Exception e) {
-            Log.w(TAG, "Error adding document", e); //실패
-            readData();
+            Log.w(TAG, "Error adding document", e);
         }
     };
 
