@@ -13,12 +13,14 @@ public class BaseAdapter extends RecyclerView.Adapter {
     protected List<?> list = null;
     protected int itemLayout = -1;
 
-    public void makeLayoutVertical(BaseAdapter adapter, RecyclerView rv, int layoutItem, ItemEvent itemEvent) {
+    public static BaseAdapter makeInstance(RecyclerView rv, int layoutItem, ItemEvent itemEvent) {
         LinearLayoutManager lm = new LinearLayoutManager((Context)itemEvent,
                 LinearLayoutManager.VERTICAL, false);
         rv.setLayoutManager(lm);
+        BaseAdapter adapter = new BaseAdapter();
         adapter.setLayout(layoutItem, itemEvent);
         rv.setAdapter(adapter);
+        return adapter;
     }
 
     public void setLayout(int itemLayout, ItemEvent itemEvent) {
@@ -44,7 +46,12 @@ public class BaseAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {}
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        View itemView = setClickable(holder, position);
+        if(itemView == null || itemEvent == null)
+            return;
+        itemEvent.onBindViewHolder(itemView, position, getData(position));
+    }
 
     @Override
     public int getItemCount() {
@@ -79,6 +86,7 @@ public class BaseAdapter extends RecyclerView.Adapter {
 
     public interface ItemEvent {
         void onClickItem(int index);
+        void onBindViewHolder(View v, int index, Object data);
     }
 
     ItemEvent itemEvent = null;

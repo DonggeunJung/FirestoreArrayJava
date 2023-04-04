@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemE
     EditText etName;
     EditText etMath;
     EditText etScience;
-    StudentsAdapter adapter;
+    BaseAdapter adapter;
     int selIndex = -1;
 
     @Override
@@ -45,9 +47,13 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemE
         etScience = findViewById(R.id.etScience);
 
         rvStudents = findViewById(R.id.rvStudents);
-        adapter = StudentsAdapter.makeInstance(rvStudents, this);
+        adapter = BaseAdapter.makeInstance(rvStudents, R.layout.student_item, this);
 
         addSnapshotListener();
+    }
+
+    Student getData(int index) {
+        return (Student)adapter.getData(index);
     }
 
     void addSnapshotListener() {
@@ -105,10 +111,17 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemE
     @Override
     public void onClickItem(int index) {
         selIndex = index;
-        Student student = adapter.getData(index);
+        Student student = getData(index);
         etName.setText(student.name);
         etMath.setText(student.math + "");
         etScience.setText(student.science + "");
+    }
+
+    @Override
+    public void onBindViewHolder(View v, int index, Object data) {
+        Student student = (Student)data;
+        TextView tvStudent = v.findViewById(R.id.tvStudent);
+        tvStudent.setText(student.getInfo());
     }
 
     public class Student {
@@ -144,14 +157,14 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemE
 
     String getNextItemId() {
         if(adapter.list == null || adapter.list.isEmpty()) return "0";
-        Student lastItem = adapter.getData(adapter.list.size()-1);
+        Student lastItem = getData(adapter.list.size()-1);
         return "" + (Integer.parseInt(lastItem.id) + 1);
     }
 
     public void onBtnUpdate(View v) {
         if(selIndex < 0) return;
         Student student = getInput();
-        student.id = adapter.getData(selIndex).id;
+        student.id = getData(selIndex).id;
         updateData(student);
         selIndex = -1;
     }
@@ -159,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemE
     public void onBtnDel(View v) {
         if(selIndex < 0) return;
         Student student = getInput();
-        student.id = adapter.getData(selIndex).id;
+        student.id = getData(selIndex).id;
         delData(student);
         selIndex = -1;
     }
