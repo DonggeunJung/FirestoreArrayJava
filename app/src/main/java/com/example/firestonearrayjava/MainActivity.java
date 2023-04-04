@@ -9,13 +9,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import java.util.ArrayList;
@@ -23,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements StudentsAdapter.ItemEvent {
+public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemEvent {
     final String TAG = MainActivity.class.getSimpleName();
     final String COLLECTION_NAME = "grade";
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -46,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements StudentsAdapter.I
         LinearLayoutManager lm = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
         rvStudents.setLayoutManager(lm);
-        adapter = new StudentsAdapter(this);
+        adapter = new StudentsAdapter();
+        adapter.setListener(this);
         rvStudents.setAdapter(adapter);
 
         addSnapshotListener();
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements StudentsAdapter.I
         updateRecyclerView(students);
     }
 
-    /*void readData() {
+    void readData() {
         selIndex = -1;
         db.collection(COLLECTION_NAME)
                 .get()
@@ -98,16 +102,16 @@ public class MainActivity extends AppCompatActivity implements StudentsAdapter.I
                         }
                     }
                 });
-    }*/
+    }
 
     void updateRecyclerView(List<Student> students) {
-        adapter.setStudents(students);
-        adapter.notifyDataSetChanged();
+        adapter.setList(students);
     }
 
     @Override
-    public void onClickItem(int index, Student student) {
+    public void onClickItem(int index) {
         selIndex = index;
+        Student student = adapter.list.get(index);
         etName.setText(student.name);
         etMath.setText(student.math + "");
         etScience.setText(student.science + "");
@@ -145,15 +149,15 @@ public class MainActivity extends AppCompatActivity implements StudentsAdapter.I
     }
 
     String getNextItemId() {
-        if(adapter.students == null || adapter.students.isEmpty()) return "0";
-        Student lastItem = adapter.students.get(adapter.students.size()-1);
+        if(adapter.list == null || adapter.list.isEmpty()) return "0";
+        Student lastItem = adapter.list.get(adapter.list.size()-1);
         return "" + (Integer.parseInt(lastItem.id) + 1);
     }
 
     public void onBtnUpdate(View v) {
         if(selIndex < 0) return;
         Student student = getInput();
-        student.id = adapter.students.get(selIndex).id;
+        student.id = adapter.list.get(selIndex).id;
         updateData(student);
         selIndex = -1;
     }
@@ -161,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements StudentsAdapter.I
     public void onBtnDel(View v) {
         if(selIndex < 0) return;
         Student student = getInput();
-        student.id = adapter.students.get(selIndex).id;
+        student.id = adapter.list.get(selIndex).id;
         delData(student);
         selIndex = -1;
     }
