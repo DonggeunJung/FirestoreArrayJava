@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class BaseAdapter extends RecyclerView.Adapter {
@@ -22,6 +21,10 @@ public class BaseAdapter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
+    public Object getData(int index) {
+        return list.get(index);
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -31,14 +34,18 @@ public class BaseAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        View itemView = ((BaseVH)holder).itemView;
-        setClickable(itemView, position);
-    }
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {}
 
     @Override
     public int getItemCount() {
         return list == null ? 0 : list.size();
+    }
+
+    protected View setClickable(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if(list == null || list.size() <= position) return null;
+        View itemView = ((BaseVH)holder).itemView;
+        setClickable(itemView, position);
+        return itemView;
     }
 
     protected void setClickable(View v, int position) {

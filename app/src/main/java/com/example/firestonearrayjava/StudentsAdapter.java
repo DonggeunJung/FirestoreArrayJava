@@ -12,15 +12,14 @@ public class StudentsAdapter extends BaseAdapter {
     }
 
     public MainActivity.Student getData(int index) {
-        return (MainActivity.Student)list.get(index);
+        return (MainActivity.Student)super.getData(index);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if(list == null || list.size() <= position) return;
-        super.onBindViewHolder(holder, position);
+        View itemView = setClickable(holder, position);
+        if(itemView == null) return;
         MainActivity.Student student = getData(position);
-        View itemView = ((BaseVH)holder).itemView;
 
         TextView tvStudent = itemView.findViewById(R.id.tvStudent);
         tvStudent.setText(student.getInfo());
