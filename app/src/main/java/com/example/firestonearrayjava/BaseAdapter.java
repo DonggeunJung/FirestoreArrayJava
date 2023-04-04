@@ -1,5 +1,6 @@
 package com.example.firestonearrayjava;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -7,14 +8,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class BaseAdapter extends RecyclerView.Adapter {
 
+    int layoutItem = -1;
+
+    public BaseAdapter(int layoutItem, ItemEvent itemEvent) {
+        this.layoutItem = layoutItem;
+        this.itemEvent = itemEvent;
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View itemView = inflater.inflate(layoutItem, parent, false);
+        return new BaseVH(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {}
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        View itemView = ((BaseVH)holder).itemView;
+        setClickable(itemView, position);
+    }
 
     @Override
     public int getItemCount() {
@@ -48,9 +61,5 @@ public class BaseAdapter extends RecyclerView.Adapter {
     }
 
     ItemEvent itemEvent = null;
-
-    public void setListener(ItemEvent itemEvent) {
-        this.itemEvent = itemEvent;
-    }
 
 }
