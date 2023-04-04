@@ -6,13 +6,20 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class BaseAdapter extends RecyclerView.Adapter {
+import java.util.List;
 
-    int layoutItem = -1;
+public class BaseAdapter extends RecyclerView.Adapter {
+    protected List<?> list = null;
+    protected int layoutItem = -1;
 
     public BaseAdapter(int layoutItem, ItemEvent itemEvent) {
         this.layoutItem = layoutItem;
         this.itemEvent = itemEvent;
+    }
+
+    public void setList(List<?> list) {
+        this.list = list;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -31,7 +38,7 @@ public class BaseAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list == null ? 0 : list.size();
     }
 
     protected void setClickable(View v, int position) {

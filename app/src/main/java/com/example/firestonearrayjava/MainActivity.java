@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemE
     @Override
     public void onClickItem(int index) {
         selIndex = index;
-        Student student = adapter.list.get(index);
+        Student student = adapter.getData(index);
         etName.setText(student.name);
         etMath.setText(student.math + "");
         etScience.setText(student.science + "");
@@ -149,14 +149,14 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemE
 
     String getNextItemId() {
         if(adapter.list == null || adapter.list.isEmpty()) return "0";
-        Student lastItem = adapter.list.get(adapter.list.size()-1);
+        Student lastItem = adapter.getData(adapter.list.size()-1);
         return "" + (Integer.parseInt(lastItem.id) + 1);
     }
 
     public void onBtnUpdate(View v) {
         if(selIndex < 0) return;
         Student student = getInput();
-        student.id = adapter.list.get(selIndex).id;
+        student.id = adapter.getData(selIndex).id;
         updateData(student);
         selIndex = -1;
     }
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemE
     public void onBtnDel(View v) {
         if(selIndex < 0) return;
         Student student = getInput();
-        student.id = adapter.list.get(selIndex).id;
+        student.id = adapter.getData(selIndex).id;
         delData(student);
         selIndex = -1;
     }
