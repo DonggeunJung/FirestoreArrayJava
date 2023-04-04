@@ -1,18 +1,28 @@
 package com.example.firestonearrayjava;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class BaseAdapter extends RecyclerView.Adapter {
     protected List<?> list = null;
-    protected int layoutItem = -1;
+    protected int itemLayout = -1;
 
-    public BaseAdapter(int layoutItem, ItemEvent itemEvent) {
-        this.layoutItem = layoutItem;
+    public void makeLayoutVertical(BaseAdapter adapter, RecyclerView rv, int layoutItem, ItemEvent itemEvent) {
+        LinearLayoutManager lm = new LinearLayoutManager((Context)itemEvent,
+                LinearLayoutManager.VERTICAL, false);
+        rv.setLayoutManager(lm);
+        adapter.setLayout(layoutItem, itemEvent);
+        rv.setAdapter(adapter);
+    }
+
+    public void setLayout(int itemLayout, ItemEvent itemEvent) {
+        this.itemLayout = itemLayout;
         this.itemEvent = itemEvent;
     }
 
@@ -29,7 +39,7 @@ public class BaseAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(layoutItem, parent, false);
+        View itemView = inflater.inflate(itemLayout, parent, false);
         return new BaseVH(itemView);
     }
 
@@ -62,11 +72,8 @@ public class BaseAdapter extends RecyclerView.Adapter {
     }
 
     class BaseVH extends RecyclerView.ViewHolder {
-        public View itemView;
-
         public BaseVH(@NonNull View itemView) {
             super(itemView);
-            this.itemView = itemView;
         }
     }
 

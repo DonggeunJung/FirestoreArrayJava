@@ -7,12 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class StudentsAdapter extends BaseAdapter {
 
-    public StudentsAdapter(int layoutItem, ItemEvent itemEvent) {
-        super(layoutItem, itemEvent);
-    }
-
     public MainActivity.Student getData(int index) {
         return (MainActivity.Student)super.getData(index);
+    }
+
+    public static StudentsAdapter makeInstance(RecyclerView rv, ItemEvent itemEvent) {
+        StudentsAdapter adapter = new StudentsAdapter();
+        adapter.makeLayoutVertical(adapter, rv, R.layout.student_item, itemEvent);
+        return adapter;
     }
 
     @Override
