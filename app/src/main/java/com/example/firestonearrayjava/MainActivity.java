@@ -56,6 +56,22 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemE
         return (Student)adapter.getData(index);
     }
 
+    @Override
+    public void onClickItem(int index) {
+        selIndex = index;
+        Student student = getData(index);
+        etName.setText(student.name);
+        etMath.setText(student.math + "");
+        etScience.setText(student.science + "");
+    }
+
+    @Override
+    public void onBindViewHolder(View v, int index, Object data) {
+        Student student = (Student)data;
+        TextView tvStudent = v.findViewById(R.id.tvStudent);
+        tvStudent.setText(student.getInfo());
+    }
+
     void addSnapshotListener() {
         CollectionReference cr = db.collection(COLLECTION_NAME);
         cr.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -106,22 +122,6 @@ public class MainActivity extends AppCompatActivity implements BaseAdapter.ItemE
 
     void updateRecyclerView(List<Student> students) {
         adapter.setList(students);
-    }
-
-    @Override
-    public void onClickItem(int index) {
-        selIndex = index;
-        Student student = getData(index);
-        etName.setText(student.name);
-        etMath.setText(student.math + "");
-        etScience.setText(student.science + "");
-    }
-
-    @Override
-    public void onBindViewHolder(View v, int index, Object data) {
-        Student student = (Student)data;
-        TextView tvStudent = v.findViewById(R.id.tvStudent);
-        tvStudent.setText(student.getInfo());
     }
 
     public class Student {

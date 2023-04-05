@@ -14,9 +14,7 @@ public class BaseAdapter extends RecyclerView.Adapter {
     protected int itemLayout = -1;
 
     public static BaseAdapter makeInstance(RecyclerView rv, int layoutItem, ItemEvent itemEvent) {
-        LinearLayoutManager lm = new LinearLayoutManager((Context)itemEvent,
-                LinearLayoutManager.VERTICAL, false);
-        rv.setLayoutManager(lm);
+        rv.setLayoutManager(new LinearLayoutManager((Context)itemEvent));
         BaseAdapter adapter = new BaseAdapter();
         adapter.setLayout(layoutItem, itemEvent);
         rv.setAdapter(adapter);
